@@ -1223,7 +1223,7 @@ Sila kembalikan jawapan strictly dalam format JSON seperti berikut tanpa sebaran
             return "-";
         }
 
-        function renderA4Layout() {
+function renderA4Layout() {
             const container = document.getElementById('dynamicLayoutArea');
             const imgs = compressedImages;
             
@@ -1231,7 +1231,7 @@ Sila kembalikan jawapan strictly dalam format JSON seperti berikut tanpa sebaran
                 container.innerHTML = `
                     <div class="space-y-3">
                         <div class="w-full h-48 bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
-                            <img src="${imgs[0] || 'https://placehold.co/600x300/e2e8f0/64748b?text=Gambar+Utama+1'}" class="w-full h-full object-cover">
+                            <div style="background-image: url('${imgs[0] || 'https://placehold.co/600x300/e2e8f0/64748b?text=Gambar+Utama+1'}'); background-size: cover; background-position: center;" class="w-full h-full"></div>
                         </div>
                         <div class="grid grid-cols-2 gap-3 text-[10px]">
                             <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
@@ -1254,10 +1254,10 @@ Sila kembalikan jawapan strictly dalam format JSON seperti berikut tanpa sebaran
                             </div>
                         </div>
                         <div class="grid grid-cols-4 gap-2 pt-1">
-                            <img src="${imgs[1] || 'https://placehold.co/200x150/e2e8f0/64748b?text=Gambar+2'}" class="w-full h-20 object-cover rounded border">
-                            <img src="${imgs[2] || 'https://placehold.co/200x150/e2e8f0/64748b?text=Gambar+3'}" class="w-full h-20 object-cover rounded border">
-                            <img src="${imgs[3] || 'https://placehold.co/200x150/e2e8f0/64748b?text=Gambar+4'}" class="w-full h-20 object-cover rounded border">
-                            <img src="${imgs[4] || 'https://placehold.co/200x150/e2e8f0/64748b?text=Gambar+5'}" class="w-full h-20 object-cover rounded border">
+                            <div style="background-image: url('${imgs[1] || 'https://placehold.co/200x150/e2e8f0/64748b?text=Gambar+2'}'); background-size: cover; background-position: center;" class="w-full h-20 rounded border"></div>
+                            <div style="background-image: url('${imgs[2] || 'https://placehold.co/200x150/e2e8f0/64748b?text=Gambar+3'}'); background-size: cover; background-position: center;" class="w-full h-20 rounded border"></div>
+                            <div style="background-image: url('${imgs[3] || 'https://placehold.co/200x150/e2e8f0/64748b?text=Gambar+4'}'); background-size: cover; background-position: center;" class="w-full h-20 rounded border"></div>
+                            <div style="background-image: url('${imgs[4] || 'https://placehold.co/200x150/e2e8f0/64748b?text=Gambar+5'}'); background-size: cover; background-position: center;" class="w-full h-20 rounded border"></div>
                         </div>
                     </div>
                 `;
@@ -1283,11 +1283,11 @@ Sila kembalikan jawapan strictly dalam format JSON seperti berikut tanpa sebaran
                             </div>
                         </div>
                         <div class="col-span-5 space-y-2">
-                            <img src="${imgs[0] || 'https://placehold.co/200x150/e2e8f0/64748b?text=G1'}" class="w-full h-16 object-cover rounded border">
-                            <img src="${imgs[1] || 'https://placehold.co/200x150/e2e8f0/64748b?text=G2'}" class="w-full h-16 object-cover rounded border">
-                            <img src="${imgs[2] || 'https://placehold.co/200x150/e2e8f0/64748b?text=G3'}" class="w-full h-16 object-cover rounded border">
-                            <img src="${imgs[3] || 'https://placehold.co/200x150/e2e8f0/64748b?text=G4'}" class="w-full h-16 object-cover rounded border">
-                            <img src="${imgs[4] || 'https://placehold.co/200x150/e2e8f0/64748b?text=G5'}" class="w-full h-16 object-cover rounded border">
+                            <div style="background-image: url('${imgs[0] || 'https://placehold.co/200x150/e2e8f0/64748b?text=G1'}'); background-size: cover; background-position: center;" class="w-full h-16 rounded border"></div>
+                            <div style="background-image: url('${imgs[1] || 'https://placehold.co/200x150/e2e8f0/64748b?text=G2'}'); background-size: cover; background-position: center;" class="w-full h-16 rounded border"></div>
+                            <div style="background-image: url('${imgs[2] || 'https://placehold.co/200x150/e2e8f0/64748b?text=G3'}'); background-size: cover; background-position: center;" class="w-full h-16 rounded border"></div>
+                            <div style="background-image: url('${imgs[3] || 'https://placehold.co/200x150/e2e8f0/64748b?text=G4'}'); background-size: cover; background-position: center;" class="w-full h-16 rounded border"></div>
+                            <div style="background-image: url('${imgs[4] || 'https://placehold.co/200x150/e2e8f0/64748b?text=G5'}'); background-size: cover; background-position: center;" class="w-full h-16 rounded border"></div>
                         </div>
                     </div>
                 `;
@@ -1313,11 +1313,11 @@ Sila kembalikan jawapan strictly dalam format JSON seperti berikut tanpa sebaran
                             </div>
                         </div>
                         <div class="grid grid-cols-3 gap-2 pt-2">
-                            <img src="${imgs[0] || 'https://placehold.co/200x150'}" class="col-span-2 w-full h-32 object-cover rounded border">
-                            <img src="${imgs[1] || 'https://placehold.co/200x150'}" class="w-full h-32 object-cover rounded border">
-                            <img src="${imgs[2] || 'https://placehold.co/200x150'}" class="w-full h-20 object-cover rounded border">
-                            <img src="${imgs[3] || 'https://placehold.co/200x150'}" class="w-full h-20 object-cover rounded border">
-                            <img src="${imgs[4] || 'https://placehold.co/200x150'}" class="w-full h-20 object-cover rounded border">
+                            <div style="background-image: url('${imgs[0] || 'https://placehold.co/200x150'}'); background-size: cover; background-position: center;" class="col-span-2 w-full h-32 rounded border"></div>
+                            <div style="background-image: url('${imgs[1] || 'https://placehold.co/200x150'}'); background-size: cover; background-position: center;" class="w-full h-32 rounded border"></div>
+                            <div style="background-image: url('${imgs[2] || 'https://placehold.co/200x150'}'); background-size: cover; background-position: center;" class="w-full h-20 rounded border"></div>
+                            <div style="background-image: url('${imgs[3] || 'https://placehold.co/200x150'}'); background-size: cover; background-position: center;" class="w-full h-20 rounded border"></div>
+                            <div style="background-image: url('${imgs[4] || 'https://placehold.co/200x150'}'); background-size: cover; background-position: center;" class="w-full h-20 rounded border"></div>
                         </div>
                     </div>
                 `;

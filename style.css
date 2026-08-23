@@ -1,0 +1,77 @@
+/* Custom CSS untuk Sistem e-OPR */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+}
+
+/* Responsive PDF A4 Simulation Container */
+.a4-page {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    margin: 0 auto;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 850px) {
+    .a4-preview-wrapper {
+        overflow-x: auto;
+    }
+    .a4-page {
+        transform: scale(0.65);
+        transform-origin: top center;
+        margin-bottom: -100mm;
+    }
+}
+
+/* Signature Canvas styling */
+canvas.sig-canvas {
+    touch-action: none;
+    cursor: crosshair;
+}
+
+/* Step transition effects */
+.step-panel {
+    display: none;
+    transition: all 0.3s ease-in-out;
+}
+.step-panel.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Splash Screen Animations */
+@keyframes splashPop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.animate-splash-pop {
+    animation: splashPop 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Printable custom print styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #opr-print-area, #opr-print-area * {
+        visibility: visible;
+    }
+    #opr-print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;
+        height: 297mm;
+        box-shadow: none;
+        transform: none;
+    }
+}

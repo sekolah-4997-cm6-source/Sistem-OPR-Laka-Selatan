@@ -45,13 +45,10 @@ const firebaseConfig = {
 // Mulakan (Initialize) Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
-}
-const db = firebase.firestore();
+    const db = firebase.firestore();
 
-// Variabel Global untuk simpan senarai sementara
-let teacherList = [];
-let senaraiTempat = [];
-let senaraiSasaran = [];
+}
+
         tailwind.config = {
             theme: {
                 extend: {

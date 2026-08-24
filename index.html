@@ -20,7 +20,34 @@
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- firebase/firestore -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
     <script>
+        
+// ==========================================
+// 1. KONFIGURASI FIREBASE FIRESTORE
+// ==========================================
+const firebaseConfig = {
+    apiKey: "MASUKKAN_API_KEY_ANDA",
+    authDomain: "MASUKKAN_AUTH_DOMAIN_ANDA",
+    projectId: "MASUKKAN_PROJECT_ID_ANDA",
+    storageBucket: "MASUKKAN_STORAGE_BUCKET_ANDA",
+    messagingSenderId: "MASUKKAN_SENDER_ID_ANDA",
+    appId: "MASUKKAN_APP_ID_ANDA"
+};
+
+// Mulakan (Initialize) Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.firestore();
+
+// Variabel Global untuk simpan senarai sementara
+let senaraiGuru = [];
+let senaraiTempat = [];
+let senaraiSasaran = [];
         tailwind.config = {
             theme: {
                 extend: {
@@ -790,23 +817,71 @@
             DRAFT: "OPR_LAKA_SELATAN_DRAFT"
         };
 
-        // DEFAULT PRESET DATA
-        let teacherList = JSON.parse(localStorage.getItem(STORAGE_KEYS.TEACHER_LIST)) || [];
-        let tempatList = JSON.parse(localStorage.getItem(STORAGE_KEYS.TEMPAT_LIST)) || [
-            "Dewan Terbuka SK Laka Selatan",
-            "Makmal Komputer SK Laka Selatan",
-            "Padang Sekolah SK Laka Selatan",
-            "Pusat Sumber Sekolah",
-            "Bilik Mesyuarat Utama",
-            "Kawasan Tapak Perhimpunan"
-        ];
-        let sasaranList = JSON.parse(localStorage.getItem(STORAGE_KEYS.SASARAN_LIST)) || [
-            "Semua Murid Tahap 1 & 2",
-            "Murid Tahap 2 (Tahun 4, 5 & 6)",
-            "Murid Tahun 6 Sahaja",
-            "Semua Guru & Staf SK Laka Selatan",
-            "AJK PIBG & Ibu Bapa"
-        ];
+        // ==========================================
+// 2. FUNGSI MUAT TURUN DATA DARI FIRESTORE
+// ==========================================
+async function muatTurunSenaraiDariFirestore() {
+    try {
+        const docRef = db.collection("tetapan_sistem").doc("senarai_dropdown");
+        const docSnap = await docRef.get();
+
+        if (docSnap.exists) {
+            const data = docSnap.data();
+            senaraiGuru = data.guru || [];
+            senaraiTempat = data.tempat || [];
+            senaraiSasaran = data.sasaran || [];
+        } else {
+            // Jika dokumen belum wujud di Firestore, kita buat dokumen baharu dengan array kosong
+            await docRef.set({ guru: [], tempat: [], sasaran: [] });
+        }
+
+        // Selepas data berjaya ditarik, panggil fungsi untuk kemas kini paparan HTML
+        kemaskiniPaparanHTML(); 
+        console.log("Data berjaya ditarik dari Firestore!");
+
+    } catch (error) {
+        console.error("Ralat menarik data dari Firestore: ", error);
+    }
+}
+
+// Fungsi untuk pamerkan ke dalam <select> dan <datalist>
+function kemaskiniPaparanHTML() {
+    // 1. Kemas kini Dropdown Guru
+    const selectGuru = document.getElementById('selectNamaGuru');
+    if(selectGuru) {
+        selectGuru.innerHTML = '<option value="" disabled selected>-- Sila Pilih --</option>';
+        senaraiGuru.forEach(nama => {
+            selectGuru.innerHTML += `<option value="${nama}">${nama}</option>`;
+        });
+        selectGuru.innerHTML += `<option value="LAIN-LAIN">TIDAK ADA DALAM SENARAI (TAIP MANUAL)</option>`;
+    }
+
+    // 2. Kemas kini Datalist Tempat
+    const listTempat = document.getElementById('senaraiTempat');
+    if(listTempat) {
+        listTempat.innerHTML = '';
+        senaraiTempat.forEach(tempat => {
+            listTempat.innerHTML += `<option value="${tempat}">`;
+        });
+    }
+
+    // 3. Kemas kini Datalist Sasaran
+    const listSasaran = document.getElementById('senaraiSasaran');
+    if(listSasaran) {
+        listSasaran.innerHTML = '';
+        senaraiSasaran.forEach(sasaran => {
+            listSasaran.innerHTML += `<option value="${sasaran}">`;
+        });
+    }
+    
+    // Kemas kini jadual/senarai di Dashboard Admin juga (jika ada fungsi renderAdminTable)
+    // renderAdminTable(); 
+}
+
+// Pastikan data dimuat turun sebaik sahaja laman web dibuka
+document.addEventListener("DOMContentLoaded", () => {
+    muatTurunSenaraiDariFirestore();
+});
 
         // ON SYSTEM INITIALIZATION
         window.addEventListener('DOMContentLoaded', () => {
@@ -1530,7 +1605,7 @@ function renderA4Layout() {
             const val = input.value.trim();
             if (val) {
                 teacherList.push(val);
-                localStorage.setItem(STORAGE_KEYS.TEACHER_LIST, JSON.stringify(teacherList));
+                simpanKeFirestore();
                 input.value = '';
                 renderAdminTeacherList();
                 initTeacherDropdown();
@@ -1539,7 +1614,7 @@ function renderA4Layout() {
 
         function removeTeacherName(index) {
             teacherList.splice(index, 1);
-            localStorage.setItem(STORAGE_KEYS.TEACHER_LIST, JSON.stringify(teacherList));
+            simpanKeFirestore();
             renderAdminTeacherList();
             initTeacherDropdown();
         }
@@ -1564,7 +1639,7 @@ function renderA4Layout() {
             const inp = document.getElementById('newTempatInput');
             if (inp.value.trim()) {
                 tempatList.push(inp.value.trim());
-                localStorage.setItem(STORAGE_KEYS.TEMPAT_LIST, JSON.stringify(tempatList));
+                simpanKeFirestore();
                 inp.value = '';
                 renderAdminLists();
                 initDatalists();
@@ -1573,7 +1648,7 @@ function renderA4Layout() {
 
         function removeTempatItem(idx) {
             tempatList.splice(idx, 1);
-            localStorage.setItem(STORAGE_KEYS.TEMPAT_LIST, JSON.stringify(tempatList));
+            simpanKeFirestore();
             renderAdminLists();
             initDatalists();
         }
@@ -1582,7 +1657,7 @@ function renderA4Layout() {
             const inp = document.getElementById('newSasaranInput');
             if (inp.value.trim()) {
                 sasaranList.push(inp.value.trim());
-                localStorage.setItem(STORAGE_KEYS.SASARAN_LIST, JSON.stringify(sasaranList));
+                simpanKeFirestore();
                 inp.value = '';
                 renderAdminLists();
                 initDatalists();
@@ -1591,7 +1666,7 @@ function renderA4Layout() {
 
         function removeSasaranItem(idx) {
             sasaranList.splice(idx, 1);
-            localStorage.setItem(STORAGE_KEYS.SASARAN_LIST, JSON.stringify(sasaranList));
+            simpanKeFirestore();
             renderAdminLists();
             initDatalists();
         }

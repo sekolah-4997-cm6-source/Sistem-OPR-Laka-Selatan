@@ -1577,6 +1577,7 @@ function renderA4Layout() {
             if (val) {
                 teacherList.push(val);
                 simpanKeFirestore();
+                window.simpanKeFirestore = simpanKeFirestore;
                 input.value = '';
                 renderAdminTeacherList();
                 initTeacherDropdown();
@@ -1586,6 +1587,7 @@ function renderA4Layout() {
         function removeTeacherName(index) {
             teacherList.splice(index, 1);
             simpanKeFirestore();
+            window.simpanKeFirestore = simpanKeFirestore;
             renderAdminTeacherList();
             initTeacherDropdown();
         }
@@ -1611,6 +1613,7 @@ function renderA4Layout() {
             if (inp.value.trim()) {
                 tempatList.push(inp.value.trim());
                 simpanKeFirestore();
+                window.simpanKeFirestore = simpanKeFirestore;
                 inp.value = '';
                 renderAdminLists();
                 initDatalists();
@@ -1620,6 +1623,7 @@ function renderA4Layout() {
         function removeTempatItem(idx) {
             tempatList.splice(idx, 1);
             simpanKeFirestore();
+            window.simpanKeFirestore = simpanKeFirestore;
             renderAdminLists();
             initDatalists();
         }
@@ -1629,6 +1633,7 @@ function renderA4Layout() {
             if (inp.value.trim()) {
                 sasaranList.push(inp.value.trim());
                 simpanKeFirestore();
+                window.simpanKeFirestore = simpanKeFirestore;
                 inp.value = '';
                 renderAdminLists();
                 initDatalists();
@@ -1638,6 +1643,7 @@ function renderA4Layout() {
         function removeSasaranItem(idx) {
             sasaranList.splice(idx, 1);
             simpanKeFirestore();
+            window.simpanKeFirestore = simpanKeFirestore;
             renderAdminLists();
             initDatalists();
         }

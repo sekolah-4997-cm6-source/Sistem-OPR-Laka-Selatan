@@ -64,6 +64,21 @@ if (!firebase.apps.length) {
                 }
             }
         }
+
+        window.simpanKeFirestore = async function() {
+    try {
+        // Gantikan "tetapan" dan "senaraiDinamik" jika nama Collection/Document anda berbeza di Firestore
+        await window.db.collection("tetapan").doc("senaraiDinamik").set({
+            guru: teacherList,
+            tempat: tempatList,
+            sasaran: sasaranList
+        }, { merge: true });
+        console.log("Senarai berjaya dikemas kini di Firestore!");
+    } catch (error) {
+        console.error("Ralat menyimpan ke Firestore:", error);
+        alert("Gagal menyimpan ke pangkalan data. Sila semak sambungan.");
+    }
+};
     </script>
 
     <style>

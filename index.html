@@ -818,7 +818,15 @@ let senaraiSasaran = [];
             DRAFT: "OPR_LAKA_SELATAN_DRAFT"
         };
 
-        // ==========================================
+     // ==========================================
+// 1. ISYTIHAR PEMBOLEHUBAH GLOBAL 
+// (Pastikan 3 baris ini ada, letak di bahagian atas kod)
+// ==========================================
+let teacherList = [];
+let senaraiTempat = [];
+let senaraiSasaran = [];
+
+// ==========================================
 // 2. FUNGSI MUAT TURUN DATA DARI FIRESTORE
 // ==========================================
 async function muatTurunSenaraiDariFirestore() {
@@ -832,88 +840,57 @@ async function muatTurunSenaraiDariFirestore() {
             senaraiTempat = data.tempat || [];
             senaraiSasaran = data.sasaran || [];
         } else {
-            // Jika dokumen belum wujud di Firestore, kita buat dokumen baharu dengan array kosong
+            // Jika dokumen belum wujud di Firestore, buat dokumen baharu
             await docRef.set({ guru: [], tempat: [], sasaran: [] });
         }
 
-        // Selepas data berjaya ditarik, panggil fungsi untuk kemas kini paparan HTML
-        kemaskiniPaparanHTML(); 
-        console.log("Data berjaya ditarik dari Firestore!");
+        // PENTING: Panggil fungsi bina senarai HANYA SELEPAS data siap ditarik
+        if (typeof initTeacherDropdown === "function") initTeacherDropdown();
+        if (typeof initDatalists === "function") initDatalists();
+        
+        console.log("Data berjaya ditarik dari Firestore dan UI dikemaskini!");
 
     } catch (error) {
         console.error("Ralat menarik data dari Firestore: ", error);
     }
 }
 
-// Fungsi untuk pamerkan ke dalam <select> dan <datalist>
-function kemaskiniPaparanHTML() {
-    // 1. Kemas kini Dropdown Guru
-    const selectGuru = document.getElementById('selectNamaGuru');
-    if(selectGuru) {
-        selectGuru.innerHTML = '<option value="" disabled selected>-- Sila Pilih --</option>';
-        teacherList.forEach(nama => {
-            selectGuru.innerHTML += `<option value="${nama}">${nama}</option>`;
-        });
-        selectGuru.innerHTML += `<option value="LAIN-LAIN">TIDAK ADA DALAM SENARAI (TAIP MANUAL)</option>`;
-    }
+// ==========================================
+// 3. ON SYSTEM INITIALIZATION (Proses Permulaan Sistem)
+// ==========================================
+window.addEventListener('DOMContentLoaded', () => {
+    const splashContent = document.getElementById('splashContent');
+    const splashScreen = document.getElementById('splashScreen');
 
-    // 2. Kemas kini Datalist Tempat
-    const listTempat = document.getElementById('senaraiTempat');
-    if(listTempat) {
-        listTempat.innerHTML = '';
-        senaraiTempat.forEach(tempat => {
-            listTempat.innerHTML += `<option value="${tempat}">`;
-        });
-    }
+    // Animasi pop-out
+    setTimeout(() => {
+        splashContent.classList.add('animate-splash-pop');
+    }, 100);
 
-    // 3. Kemas kini Datalist Sasaran
-    const listSasaran = document.getElementById('senaraiSasaran');
-    if(listSasaran) {
-        listSasaran.innerHTML = '';
-        senaraiSasaran.forEach(sasaran => {
-            listSasaran.innerHTML += `<option value="${sasaran}">`;
-        });
+    // Animasi pudar (fade)
+    setTimeout(() => {
+        splashScreen.style.opacity = '0';
+        setTimeout(() => {
+            splashScreen.style.display = 'none';
+        }, 1000); 
+    }, 2500);
+
+    // 1. Mula tarik data dari Firestore dahulu
+    muatTurunSenaraiDariFirestore();
+
+    // 2. Load fungsi-fungsi sistem yang lain
+    initUploadSlots();
+    initSignatureCanvas();
+    loadDraftFromLocalStorage();
+    
+    // Pastikan pembolehubah selectedCategory ada (lalai ke 'kurikulum' jika tiada)
+    if (typeof selectedCategory !== 'undefined') {
+        updateCategoryTheme(selectedCategory);
     }
     
-    // Kemas kini jadual/senarai di Dashboard Admin juga (jika ada fungsi renderAdminTable)
-    // renderAdminTable(); 
-}
-
-// Pastikan data dimuat turun sebaik sahaja laman web dibuka
-document.addEventListener("DOMContentLoaded", () => {
-    muatTurunSenaraiDariFirestore();
+    if (typeof renderA4Layout === "function") renderA4Layout();
+    if (typeof setupFormListeners === "function") setupFormListeners();
 });
-
-        // ON SYSTEM INITIALIZATION
-        window.addEventListener('DOMContentLoaded', () => {
-            const splashContent = document.getElementById('splashContent');
-            const splashScreen = document.getElementById('splashScreen');
-
-            // Mula animasi pop-out selepas sedikit masa (100ms)
-            setTimeout(() => {
-                splashContent.classList.add('animate-splash-pop');
-            }, 100);
-
-            // Mula memudarkan seluruh overlay ke putih selepas 2.5 saat
-            setTimeout(() => {
-                splashScreen.style.opacity = '0';
-                
-                // Sembunyikan elemen secara total selepas animasi pudarnya selesai
-                setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                }, 1000); 
-            }, 2500);
-
-            // PENTING: Fungsi ini diaktifkan semula supaya senarai guru dimuat naik setiap kali dibuka
-            initTeacherDropdown(); 
-            initDatalists();
-            initUploadSlots();
-            initSignatureCanvas();
-            loadDraftFromLocalStorage();
-            updateCategoryTheme(selectedCategory);
-            renderA4Layout();
-            setupFormListeners();
-        });
 
         // WIZARD NAVIGATION LOGIC
         function goToStep(stepNumber) {

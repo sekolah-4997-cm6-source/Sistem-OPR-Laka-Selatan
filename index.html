@@ -45,8 +45,8 @@ const firebaseConfig = {
 // Mulakan (Initialize) Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    window.db = db;
+  const db = firebase.firestore();
+window.db = db;
 
 }
 
@@ -65,18 +65,18 @@ if (!firebase.apps.length) {
             }
         }
 
-        window.simpanKeFirestore = async function() {
+       window.simpanKeFirestore = async function() {
     try {
-        // Gantikan "tetapan" dan "senaraiDinamik" jika nama Collection/Document anda berbeza di Firestore
+        // Firebase v8 syntax untuk set()
         await window.db.collection("tetapan").doc("senaraiDinamik").set({
             guru: teacherList,
             tempat: tempatList,
             sasaran: sasaranList
         }, { merge: true });
-        console.log("Senarai berjaya dikemas kini di Firestore!");
+        
+        console.log("Semua senarai berjaya dikemas kini di Firestore!");
     } catch (error) {
         console.error("Ralat menyimpan ke Firestore:", error);
-        alert("Gagal menyimpan ke pangkalan data. Sila semak sambungan.");
     }
 };
     </script>
@@ -837,32 +837,39 @@ if (!firebase.apps.length) {
 // ==========================================
 // 2. FUNGSI MUAT TURUN DATA DARI FIRESTORE
 // ==========================================
-async function muatTurunSenaraiDariFirestore() {
+window.muatTurunSenaraiDariFirestore = async function() {
     try {
-        const docRef = db.collection("tetapan_sistem").doc("senarai_dropdown");
-        const docSnap = await docRef.get();
+        // Firebase v8 syntax untuk get()
+        const docSnap = await window.db.collection("tetapan").doc("senaraiDinamik").get();
 
         if (docSnap.exists) {
             const data = docSnap.data();
-            teacherList = data.guru || [];
-            senaraiTempat = data.tempat || [];
-            senaraiSasaran = data.sasaran || [];
+
+            // 1. Kosongkan array lama dan masukkan data dari Firebase
+            teacherList.length = 0; 
+            if (data.guru) teacherList.push(...data.guru);
+
+            tempatList.length = 0; 
+            if (data.tempat) tempatList.push(...data.tempat);
+
+            sasaranList.length = 0; 
+            if (data.sasaran) sasaranList.push(...data.sasaran);
+
+            // 2. Kemas kini paparan (Dropdown & Senarai Admin)
+            if (typeof initTeacherDropdown === 'function') initTeacherDropdown();
+            if (typeof initDatalists === 'function') initDatalists();
+            if (typeof renderAdminTeacherList === 'function') renderAdminTeacherList();
+            if (typeof renderAdminLists === 'function') renderAdminLists();
+
+            console.log("Data berjaya ditarik dan UI dikemaskini!");
         } else {
-            // Jika dokumen belum wujud di Firestore, buat dokumen baharu
-            await docRef.set({ guru: [], tempat: [], sasaran: [] });
+            console.log("Tiada data dijumpai di Firebase.");
         }
-
-        // PENTING: Panggil fungsi bina senarai HANYA SELEPAS data siap ditarik
-        if (typeof initTeacherDropdown === "function") initTeacherDropdown();
-        if (typeof initDatalists === "function") initDatalists();
-        
-        console.log("Data berjaya ditarik dari Firestore dan UI dikemaskini!");
-
     } catch (error) {
-        console.error("Ralat menarik data dari Firestore: ", error);
+        console.error("Ralat menarik data dari Firestore:", error);
     }
-}
-
+};
+        
 // ==========================================
 // 3. ON SYSTEM INITIALIZATION (Proses Permulaan Sistem)
 // ==========================================

@@ -46,7 +46,7 @@ if (!firebase.apps.length) {
 const db = firebase.firestore();
 
 // Variabel Global untuk simpan senarai sementara
-let senaraiGuru = [];
+let teacherList = [];
 let senaraiTempat = [];
 let senaraiSasaran = [];
         tailwind.config = {
@@ -828,7 +828,7 @@ async function muatTurunSenaraiDariFirestore() {
 
         if (docSnap.exists) {
             const data = docSnap.data();
-            senaraiGuru = data.guru || [];
+            teacherList = data.guru || [];
             senaraiTempat = data.tempat || [];
             senaraiSasaran = data.sasaran || [];
         } else {
@@ -851,7 +851,7 @@ function kemaskiniPaparanHTML() {
     const selectGuru = document.getElementById('selectNamaGuru');
     if(selectGuru) {
         selectGuru.innerHTML = '<option value="" disabled selected>-- Sila Pilih --</option>';
-        senaraiGuru.forEach(nama => {
+        teacherList.forEach(nama => {
             selectGuru.innerHTML += `<option value="${nama}">${nama}</option>`;
         });
         selectGuru.innerHTML += `<option value="LAIN-LAIN">TIDAK ADA DALAM SENARAI (TAIP MANUAL)</option>`;
